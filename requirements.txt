@@ -23,6 +23,8 @@ pytest-pythonpath==0.7.3
 pytz==2021.1
 redis==3.5.3
 requests==2.25.1
+requests-mock==1.9.3
+six==1.16.0
 sqlparse==0.4.1
 stringcase==1.2.0
 toml==0.10.2
