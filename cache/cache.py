@@ -30,13 +30,8 @@ def get_daily(start: date, end: date) -> List[DailyResponse]:
         response = get(missing[0], missing[-1]) if len(missing) > 1 else get(missing[0], missing[0])
         fetched.extend((datum.to_daily_response() for datum in response.by_date))
 
-    print(dates)
-    print(fetched)
-
     for datum in fetched:
         dates[datum.date] = datum
-
-    print(dates)
 
     for k, v in dates.items():
         cache.set(str(k), v)
