@@ -1,6 +1,8 @@
+from operator import attrgetter
 from pytest import fixture
-from typing import List
-from cache.data import TotalResponseExternal, DailyResponse
+from rest_framework.test import APIRequestFactory
+from typing import List, Dict
+from cache.data import TotalResponseExternal, DailyResponse, TotalResponse
 
 
 @fixture(scope='session')
@@ -82,15 +84,34 @@ def raw_response_external() -> str:
 
 
 @fixture(scope="session")
-def response_external(raw_response_external) -> TotalResponseExternal:
+def response_external(raw_response_external: str) -> TotalResponseExternal:
     return TotalResponseExternal.from_json(raw_response_external)
 
 
 @fixture(scope="session")
-def daily_data(response_external) -> List[DailyResponse]:
+def daily_data(response_external: TotalResponseExternal) -> List[DailyResponse]:
     return [datum.to_daily_response() for datum in response_external.by_date]
 
 
 @fixture(scope="session")
-def daily_response(daily_data) -> List[DailyResponse]:
+def daily_response(daily_data: List[DailyResponse]) -> List[Dict]:
     return [datum.to_dict() for datum in daily_data]
+
+
+@fixture(scope="session")
+def total_data(daily_data: List[DailyResponse]) -> TotalResponse:
+    return TotalResponse(
+        conversation_count=sum(map(attrgetter('conversation_count'), daily_data)),
+        missed_chat_count=sum(map(attrgetter('missed_chat_count'), daily_data)),
+        visitors_with_conversation_count=sum(map(attrgetter('visitors_with_conversation_count'), daily_data)),
+    )
+
+
+@fixture(scope="session")
+def total_response(total_data: TotalResponse) -> Dict:
+    return total_data.to_dict()
+
+
+@fixture
+def request_factory():
+    return APIRequestFactory()
