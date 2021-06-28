@@ -1,8 +1,9 @@
 from datetime import date, timedelta
 from django.core.cache import cache
+from operator import attrgetter
 from typing import List
 from .api import get
-from .data import DailyResponse
+from .data import DailyResponse, TotalResponse
 from .utils import date_range
 
 
@@ -37,3 +38,16 @@ def get_daily(start: date, end: date) -> List[DailyResponse]:
         cache.set(str(k), v)
 
     return list(dates.values())
+
+
+def get_total(start: date, end: date) -> TotalResponse:
+    if start > end:
+        raise ValueError('Start date must be older or equal to end date')
+
+    daily = get_daily(start, end)
+
+    return TotalResponse(
+        conversation_count=sum(map(attrgetter('conversation_count'), daily)),
+        missed_chat_count=sum(map(attrgetter('missed_chat_count'), daily)),
+        visitors_with_conversation_count=sum(map(attrgetter('visitors_with_conversation_count'), daily)),
+    )
