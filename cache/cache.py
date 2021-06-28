@@ -34,6 +34,12 @@ def get_daily(start: date, end: date) -> List[DailyResponse]:
     for datum in fetched:
         dates[datum.date] = datum
 
+    dates = {
+        k: v
+        for k, v in dates.items()
+        if v is not None
+    }
+
     for k, v in dates.items():
         cache.set(str(k), v)
 
