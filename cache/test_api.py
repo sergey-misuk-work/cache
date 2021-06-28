@@ -1,11 +1,10 @@
 from .api import get
-from .data import APIResponse
 from datetime import date
 from django.conf import settings
 import pytest
 
 
-def test_successful_get(raw_api_response, api_response, requests_mock):
+def test_successful_get(raw_response_external, response_external, requests_mock):
     start = date(2017, 6, 12)
     end = date(2017, 6, 15)
     query = f'start_date={start}&end_date={end}'
@@ -13,9 +12,9 @@ def test_successful_get(raw_api_response, api_response, requests_mock):
     headers = {
         'Authorization': f'Token {settings.ACCESS_TOKEN}',
     }
-    requests_mock.get(url, headers=headers, complete_qs=True, text=raw_api_response)
+    requests_mock.get(url, headers=headers, complete_qs=True, text=raw_response_external)
     data = get(start, end)
-    assert data == api_response
+    assert data == response_external
 
 
 def test_invalid_date_range():

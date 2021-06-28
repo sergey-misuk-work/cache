@@ -1,9 +1,10 @@
 from pytest import fixture
-from cache.data import APIResponse
+from typing import List
+from cache.data import TotalResponseExternal, DailyResponse
 
 
 @fixture(scope='session')
-def raw_api_response() -> str:
+def raw_response_external() -> str:
     return """{
     "by_date": [
         {
@@ -81,5 +82,15 @@ def raw_api_response() -> str:
 
 
 @fixture(scope="session")
-def api_response(raw_api_response) -> APIResponse:
-    return APIResponse.from_json(raw_api_response)
+def response_external(raw_response_external) -> TotalResponseExternal:
+    return TotalResponseExternal.from_json(raw_response_external)
+
+
+@fixture(scope="session")
+def daily_data(response_external) -> List[DailyResponse]:
+    return [datum.to_daily_response() for datum in response_external.by_date]
+
+
+@fixture(scope="session")
+def daily_response(daily_data) -> List[DailyResponse]:
+    return [datum.to_dict() for datum in daily_data]

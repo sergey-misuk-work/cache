@@ -79,11 +79,10 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
-        "KEY_PREFIX": ""
+        "KEY_PREFIX": "",
+        "TIMEOUT": 3600  # 1 hour
     }
 }
-
-CACHE_TTL = 60 * 1  # 1 minute
 
 
 # Password validation
