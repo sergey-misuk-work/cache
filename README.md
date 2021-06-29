@@ -43,6 +43,7 @@ install project dependencies
 ```shell
 cd cache
 python3.9 -m venv venv
+. venv/bin/activate
 pip install -r requirements.txt
 ```
 
