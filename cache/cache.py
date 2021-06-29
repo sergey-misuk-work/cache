@@ -3,11 +3,11 @@ from django.core.cache import cache
 from operator import attrgetter
 from typing import List
 from .api import get
-from .data import DailyResponse, TotalResponse
+from .data import SingleDay, TotalResponse
 from .utils import date_range
 
 
-def get_daily(start: date, end: date) -> List[DailyResponse]:
+def get_daily(start: date, end: date) -> List[SingleDay]:
     if start > end:
         raise ValueError('Start date must be older or equal to end date')
 
@@ -22,14 +22,14 @@ def get_daily(start: date, end: date) -> List[DailyResponse]:
         if v is not None:
             if missing:
                 response = get(missing[0], missing[-1]) if len(missing) > 1 else get(missing[0], missing[0])
-                fetched.extend((datum.to_daily_response() for datum in response.by_date))
+                fetched.extend((datum.to_single_day() for datum in response.by_date))
             missing = []
         else:
             missing.append(k)
 
     if missing:
         response = get(missing[0], missing[-1]) if len(missing) > 1 else get(missing[0], missing[0])
-        fetched.extend((datum.to_daily_response() for datum in response.by_date))
+        fetched.extend((datum.to_single_day() for datum in response.by_date))
 
     for datum in fetched:
         dates[datum.date] = datum

@@ -7,11 +7,18 @@ from typing import List
 
 @dataclass_json
 @dataclass
-class DailyResponse:
+class SingleDay:
     date: date
     conversation_count: int
     missed_chat_count: int
     visitors_with_conversation_count: int
+
+
+@dataclass_json
+@dataclass
+class DailyResponse:
+    total: int
+    days: List[SingleDay]
 
 
 @dataclass_json
@@ -38,8 +45,8 @@ class DailyResponseExternal:
     visitors_with_chat_count: int
     visitors_with_conversation_count: int
 
-    def to_daily_response(self) -> DailyResponse:
-        return DailyResponse(
+    def to_single_day(self) -> SingleDay:
+        return SingleDay(
             # TODO: find out why it's not parsed into date automatically
             date=self.date if isinstance(self.date, date) else datetime.strptime(self.date, '%Y-%m-%d').date(),
             conversation_count=self.conversation_count,
