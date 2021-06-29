@@ -62,7 +62,6 @@ $(function() {
   function selectPage() {
     const page = $(this).find('a').text();
     next = rowsPerPage * (page - 1);
-    console.log(next);
     loadDaily();
   }
 
